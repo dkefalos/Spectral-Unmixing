@@ -33,7 +33,7 @@ void eigsort(double *, double **, int);
 int MNF(FILE*, FILE*, FILE*, int, int, int, int, int, int);
 int PCA(FILE*, FILE*, int, int, int, int, FILE*, int, int);
 int image_add(FILE*, FILE*, FILE*, int, int, int, FILE*, int);
-int SEE_E(FILE*, FILE*, FILE*, FILE*, int, int , int, int, double**, int, int);
+int SEE_E(FILE*, FILE*, FILE*, FILE*, FILE*, int, int , int, int, double**, int, int);
 int Matrix_inversion(FP_TYPE*, FP_TYPE*, int);
 int Cholesky_decomposition(FP_TYPE *, FP_TYPE *, int );
 int NND(FILE*, FILE*, int, int, int, int);
@@ -52,9 +52,9 @@ return (da > db) ? -1 : 1;
 
 int main(int argc, char *argv[]) {
 
-FILE     *fin, *report, *report2, *fsignal, *fplus;
+FILE     *fin, *report, *report2, *report3, *fsignal, *fplus;
 int      rows, cols, bands, nendmembers, i, j, k, m, nthreads, opt, nvalue, npixels;
-char     ersfile[100], binfile[100], tiffile[100], sysstring[200], txtfile[100], txtfile2[100];
+char     ersfile[100], binfile[100], tiffile[100], sysstring[200], txtfile[100], txtfile2[100], txtfile3[100];
 float    *buffer;
 double   **a;
 
@@ -108,6 +108,9 @@ i=(strlen(binfile));
 memcpy(txtfile2, binfile, strlen(binfile));
 txtfile2[i]='\0';
 sprintf(txtfile2, "%s_endmembers.txt", binfile);
+memcpy(txtfile3, binfile, strlen(binfile));
+txtfile3[i]='\0';
+sprintf(txtfile3, "%s_SEE-E_endmembers_spectral.txt", binfile);
 
 /* Argument Handling */
 
@@ -149,7 +152,7 @@ sprintf(sysstring, "gdal_translate -ot Float32 -of ERS %s %s", tiffile, ersfile)
 printf("\n");
 printf(sysstring);
 printf("\n");
-if ((i=system(sysstring))!=0 && (i=system(sysstring))!=1 ){
+if ((i=system(sysstring))!=0 && (i=system(sysstring))!=1 && (i=system(sysstring))!=256 ){
     printf("\nGDAL did not run correctly %d", i);
     exit(-1);
     }
@@ -169,6 +172,11 @@ if ( (report=fopen(txtfile , "wt")) == NULL){
 
 if ( (report2=fopen(txtfile2 , "wt")) == NULL){
     printf("\nCannot open %s file.\n", txtfile2);
+    exit (-1);
+    }
+
+if ( (report3=fopen(txtfile3 , "wt")) == NULL){
+    printf("\nCannot open %s file.\n", txtfile3);
     exit (-1);
     }
 
@@ -235,7 +243,7 @@ else if (opt==3){
 /* Endmember Spectal Signature Extraction */
 
 image_add(fin, fsignal, report, rows, cols, bands, fplus, nvalue);
-SEE_E(fplus, fin, report, report2, rows, cols, bands, nendmembers, a, nvalue, npixels);
+SEE_E(fplus, fin, report, report2, report3, rows, cols, bands, nendmembers, a, nvalue, npixels);
 puts("\nSEE-E Executed");
 
 /* Closing */
@@ -782,7 +790,7 @@ if (fclose(fpca2)!=0){
 return (0);
 }
 
-int SEE_E(FILE* fplus, FILE* fin, FILE* report, FILE* report2, int rows, int cols, int bands, int nendmembers, double **a, int nvalue, int npixels){
+int SEE_E(FILE* fplus, FILE* fin, FILE* report, FILE* report2, FILE* report3, int rows, int cols, int bands, int nendmembers, double **a, int nvalue, int npixels){
 
 FILE     *fpca4;
 int      *coordsr, *coordsc, *endm, c, i, j, k, l, *tempint;
@@ -954,13 +962,13 @@ for (i=0; i<2*(nendmembers-1); i++){
 
 fprintf(report, "\nEndmember Candidates:");
 for (i=0; i<(nendmembers-1); i++){
-    fprintf(report, "\n%d: %10.5lf row=%d, col=%d :", i+1, hmin[i], coordsr[i], coordsc[i]);
+    fprintf(report, "\n%d: row=%d, col=%d :", i+1, coordsr[i]+1, coordsc[i]+1);
     for(j=0; j<bands; j++){
         fprintf(report, " %f", ssignature[i][j]);
         }
     }
 for (i=(nendmembers-1); i<2*(nendmembers-1); i++){
-    fprintf(report, "\n%d: %10.5lf row=%d, col=%d :", i+1, hmax[i-(nendmembers-1)], coordsr[i], coordsc[i]);
+    fprintf(report, "\n%d: row=%d, col=%d :", i+1, coordsr[i]+1, coordsc[i]+1);
     for(j=0; j<bands; j++){
         fprintf(report, " %f", ssignature[i][j]);
         }
@@ -1125,6 +1133,13 @@ for (i=0; i<nendmembers; i++){
         }
     fprintf(report2, "\n");
     }
+
+for (i=0; i<bands; i++){
+    for (j=0; j<nendmembers; j++){
+        fprintf(report3, "\t%f" ,(a[i][j]));
+        }
+    fprintf(report3, "\n");
+}
 
 /* SEE Closing */
 
@@ -1692,7 +1707,7 @@ free(buffer);
 
 return(0);
 }
-/* Source: http://users.ntua.gr/chiossif/ */
+
 int Matrix_inversion(FP_TYPE *ata,FP_TYPE *ata_inv,int n) {
     FP_TYPE *tmpa, *b;
     int *l;
@@ -1719,7 +1734,7 @@ int Matrix_inversion(FP_TYPE *ata,FP_TYPE *ata_inv,int n) {
     free(tmpa);
     return r_value;
 }
-/* Source: http://users.ntua.gr/chiossif/ */
+
 int Cholesky_decomposition(FP_TYPE *a, FP_TYPE *b, int n) {
     FP_TYPE s;
     register int i, j, k;
@@ -1775,7 +1790,7 @@ a[1..n][1..n]. On output, elements of a above the diagonal are destroyed.
 d[1..n] returns the eigenvalues of a.	v[1..n][1..n] is a matrix whose
 columns contain, on output, the normalized eigenvectors of a.
 nrot returns the number of Jacobi rotations that were required. */
-/* Source: http://users.ntua.gr/chiossif/ */
+
 void jacobi(double **a, int n, double *d, double **v, int *nrot){
 
 int j,iq,ip,i;
@@ -1869,7 +1884,7 @@ for(i=1;i<=50;i++){
 /* Given the eigenvalues d[1..n] and eigenvectors v[1..n][1..n] as output
 from jacobi routine, eigensort function sorts the eigenvalues into descending order,
 and rearranges the columns of v correspondingly. The method is straight insertion. */
-/* Source: http://users.ntua.gr/chiossif/ */
+
 void eigsort(double d[],double **v,int n){
 
 int k,j,i;
