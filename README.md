@@ -76,3 +76,24 @@ Endmembers :
 
 194.74 241.98 11.20 182.41 14.08
 
+
+|--------------------Programs-------------------|
+
+
+--ODM.c : Performs the Outlier Detection Method (ODM) in order to estimate the number of endmembers of a hyperspectral image.
+
+--SEE.c : Performs the Simple Endmember Extraction Method (SEE) in order to extract the spectral signatures of the endmembers of a hyperspectral image.
+
+--SEE-E.c : Performs the Simple Endmember Extraction Method -Enchanced (SEE-E) in order to extract the spectral signatures of the endmembers of a hyperspectral image.
+
+--AFEM.c : Performs Abundance Fraction Estimation Method in order to estimate the abundance fraction of each endmember in every pixel of a hyperspectral image.
+
+--MNF.c : Performs the Maximum Noise Fraction Method (MNF) on a hyrespectral image.
+
+--PCA.c : Performs the Principal Components Transformation (PC) on an Image.
+
+--Unmixing.c : Performs MNF, ODM, SEE-E and AFEM Methods on a hyrespectral image.
+
+--SAD.c : Creates an image where the value every pixel is the spectral angle of its true value with a given set of signatures.
+
+--SADtxt.c : Calculates the spectral angles of two sets of signatures.
