@@ -58,7 +58,7 @@ Compiler Instructions are referred to the open source IDE CodeBlocks, available 
 
  
 
-Text files used as input files must follow a specific patern. The first line contains user data, the programs ignore it. In the next, there must be the value of all the endmembers in each band. The values of each endmember in a specific band are space delimited. So, each endmember occupies a column. For Example if we have 5 endmembers : 
+Text files used as input files must follow a specific patern. The first line contains user data, the programs ignore it. In the next, there must be the value of all the endmembers in each band. The values of each endmember in a specific band are space delimited. So, each endmember occupies a column. For Example, if we have 5 endmembers : 
 
 
 Endmembers : 
@@ -72,6 +72,7 @@ Endmembers :
 .        .     .      .     .
 
 .        .     .      .     .
+
 .        .     .      .     .
 
 194.74 241.98 11.20 182.41 14.08
