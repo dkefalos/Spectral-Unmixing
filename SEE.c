@@ -852,13 +852,13 @@ for (i=0; i<2*(nendmembers-1); i++){
 
 fprintf(report, "\nEndmember Candidates:");
 for (i=0; i<(nendmembers-1); i++){
-    fprintf(report, "\n%d: row=%d, col=%d :", i+1, coordsr[i]+1, coordsc[i]+1);
+    fprintf(report, "\n%d: row=%d, col=%d :", i+1, coordsr[i], coordsc[i]);
     for(j=0; j<bands; j++){
         fprintf(report, " %f", ssignature[i][j]);
         }
     }
 for (i=(nendmembers-1); i<2*(nendmembers-1); i++){
-    fprintf(report, "\n%d: row=%d, col=%d :", i+1, coordsr[i]+1, coordsc[i]+1);
+    fprintf(report, "\n%d: row=%d, col=%d :", i+1, coordsr[i], coordsc[i]);
     for(j=0; j<bands; j++){
         fprintf(report, " %f", ssignature[i][j]);
         }
@@ -1007,7 +1007,7 @@ k=0;
 fprintf(report, "\nEndmembers :\n");
 for (i=0; i<2*(nendmembers-1); i++){
     if (endm[i]!=0){
-        fprintf(report, "\nEndmember %d: at row %d, col %d:\t", i+1, coordsr[i]+1, coordsc[i]+1);
+        fprintf(report, "\nEndmember %d: at row %d, col %d:\t", i+1, coordsr[i], coordsc[i]);
         for (j=0; j<bands; j++){
             fprintf(report, "\t%5.5lf", ssignature[i][j]);
             a[j][k]=ssignature[i][j];
